@@ -1,0 +1,60 @@
+@charset "UTF-8";
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+div.chooselink_body {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  background-image: url('https://storage.googleapis.com/zao_ba_man_tang/linebot/images/body.png');
+  background-size: contain;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+img.titlelogo_img {
+  width: 45%;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+span.span_imf {
+  margin-bottom: 50px;
+  font-size: 36px;
+}
+div.choosebox {
+  margin-bottom: 50px;
+  width: 80%;
+  height: 180px;
+  line-height: 180px;
+  font-size: 46px;
+  background-color: #ffed48;
+  text-align: center;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/*
+div.choosebox_name{
+	width: auto;
+	height: 50px;
+	font-size: 40px;
+	line-height: 50px;
+}
+div.choosebox_tellphone{
+	height: 30px;
+	font-size: 30px;
+}
+div.choosebox_add{
+	height: 30px;
+	font-size: 30px;
+}
+*/
