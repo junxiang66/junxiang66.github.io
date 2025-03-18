@@ -29,6 +29,9 @@
         let obstacles = [];
         let frame = 0;
         let gameOver = false;
+        let score = 0;
+        let obstacleSpeed = 5;
+        let touching = false;
 
         function drawShark() {
             ctx.fillStyle = "blue";
@@ -48,7 +51,7 @@
                 let yPos = Math.random() * (canvas.height - size);
                 obstacles.push({ x: canvas.width, y: yPos, width: size, height: size });
             }
-            obstacles.forEach(obstacle => obstacle.x -= 5);
+            obstacles.forEach(obstacle => obstacle.x -= obstacleSpeed);
             obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
         }
 
@@ -66,9 +69,24 @@
         }
 
         function updateShark() {
+            if (touching) {
+                shark.dy = -3;
+            } else {
+                shark.dy = 3;
+            }
             shark.y += shark.dy;
             if (shark.y < 0) shark.y = 0;
             if (shark.y + shark.height > canvas.height) shark.y = canvas.height - shark.height;
+        }
+
+        function updateScore() {
+            if (!gameOver) {
+                score++;
+            }
+        }
+
+        function increaseDifficulty() {
+            obstacleSpeed *= 1.05;
         }
 
         function gameLoop() {
@@ -89,13 +107,16 @@
             requestAnimationFrame(gameLoop);
         }
 
-        document.addEventListener("keydown", () => {
-            shark.dy = -5;
+        document.addEventListener("touchstart", () => {
+            touching = true;
         });
 
-        document.addEventListener("keyup", () => {
-            shark.dy = 3;
+        document.addEventListener("touchend", () => {
+            touching = false;
         });
+
+        setInterval(updateScore, 300);
+        setInterval(increaseDifficulty, 10000);
 
         gameLoop();
     </script>
