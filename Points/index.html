@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <title>消費集點 免費兌換</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      /* ====== BRAND DESIGN ====== */
+      :root {
+        --red: #f4434f;
+        --red-dark: #e53442;
+        --yellow-light: #ffecc4;
+        --yellow-main: #ffd777;
+        --yellow-deep: #ffcd5c;
+        --card-radius: 18px;
+        --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.12);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+        background: var(--yellow-light);
+        display: flex;
+        justify-content: center;
+        padding: 16px 10px 24px;
+      }
+      .page {
+        width: 100%;
+        max-width: 960px;
+        background: #fef6e5;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+      }
+
+      /* ====== HEADER ====== */
+      .hero {
+        background: repeating-linear-gradient(
+          90deg,
+          var(--yellow-main) 0,
+          var(--yellow-main) 70px,
+          var(--yellow-deep) 70px,
+          var(--yellow-deep) 140px
+        );
+        padding: 28px 12px 24px;
+        text-align: center;
+        color: #ff0050;
+      }
+      .hero-title {
+        font-size: clamp(26px, 6vw, 40px);
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        margin-bottom: 6px;
+        text-shadow: 0 3px 0 rgba(255, 255, 255, 0.8);
+      }
+      .hero-sub {
+        font-size: clamp(22px, 5vw, 32px);
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-shadow: 0 3px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      /* ====== RED AREA ====== */
+      .content {
+        background: var(--red);
+        padding: 24px 14px 16px;
+        color: #fff;
+        position: relative;
+      }
+      .content::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -22px;
+        height: 32px;
+        background: radial-gradient(
+            circle at 20px 32px,
+            var(--red) 18px,
+            transparent 18px
+          ),
+          radial-gradient(
+            circle at 80px 32px,
+            var(--red) 18px,
+            transparent 18px
+          ),
+          radial-gradient(
+            circle at 140px 32px,
+            var(--red) 18px,
+            transparent 18px
+          );
+        background-size: 160px 32px;
+      }
+      .rule-area {
+        text-align: center;
+        margin-bottom: 18px;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      /* ====== ITEM CARD ====== */
+      .items {
+        border-radius: 18px;
+      }
+      .item-main,
+      .item-card {
+        background: #fff;
+        border-radius: var(--card-radius);
+        display: flex;
+        gap: 10px;
+        cursor: pointer;
+      }
+      .item-main {
+        padding: 14px 16px;
+        flex-direction: column;
+        margin-bottom: 16px;
+      }
+      .item-main img {
+        width: 100%;
+        max-width: 360px;
+        border-radius: 16px;
+        object-fit: cover;
+        margin: auto;
+      }
+      .item-main-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+      .item-main-name {
+        font-size: 22px;
+        font-weight: 900;
+        color: #444;
+      }
+      .item-main-points {
+        font-size: 24px;
+        font-weight: 900;
+        color: #ff4b33;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .item-card {
+        padding: 10px 12px;
+        align-items: center;
+      }
+      .item-card img {
+        width: 62px;
+        height: 62px;
+        border-radius: 12px;
+        object-fit: cover;
+      }
+      .item-name {
+        font-size: 18px;
+        color: #444;
+        font-weight: 700;
+        flex: 1;
+      }
+      .item-points {
+        font-size: 20px;
+        color: #ff4b33;
+        font-weight: 900;
+      }
+
+      /* ====== FOOTER ====== */
+      .footer {
+        padding: 14px;
+        text-align: center;
+        font-size: 12px;
+        background: var(--red-dark);
+        color: #fff8f2;
+      }
+      .brand {
+        font-weight: 900;
+        margin-top: 8px;
+        letter-spacing: 0.1em;
+      }
+
+      /* ====== MODAL ====== */
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+        padding: 20px;
+      }
+      .modal.show {
+        display: flex;
+      }
+      .modal-content {
+        background: #fff;
+        border-radius: 18px;
+        padding: 22px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        position: relative;
+        animation: fade 0.25s ease-out;
+      }
+      #modal-close {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        font-size: 26px;
+        font-weight: 900;
+        cursor: pointer;
+        color: #333;
+      }
+      #modal-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #333;
+        margin-bottom: 8px;
+      }
+      #modal-product {
+        width: 120px;
+        height: 120px;
+        border-radius: 16px;
+        object-fit: cover;
+        display: block;
+        margin: 4px auto 12px;
+      }
+      .notice-text {
+        font-size: 15px;
+        color: #555;
+        margin: 8px 0 12px;
+      }
+      #modal-qrcode {
+        width: 220px;
+        height: 220px;
+        border-radius: 18px;
+        margin: 10px auto 0;
+        background: #eee;
+      }
+      #modal-product {
+        width: 85%;
+        max-width: 300px;
+        height: auto;
+        border-radius: 16px;
+        object-fit: cover;
+        margin: 10px auto 14px;
+        display: block;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* ====== RWD ====== */
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .item-main {
+          flex-direction: row;
+        }
+        .item-main img {
+          width: 150px;
+          height: 150px;
+          border-radius: 50%;
+        }
+        #modal-product {
+          max-width: 340px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-title">消費集點</div>
+        <div class="hero-sub">免費兌換餐點</div>
+      </header>
+
+      <section class="content">
+        <div class="rule-area">
+          <div
+            class="rule-tag"
+            style="
+              background: #ffb24b;
+              padding: 6px 16px;
+              border-radius: 999px;
+              font-weight: 900;
+            "
+          >
+            如何累積點數？
+          </div>
+          <div class="frule-text">
+            消費<strong>50元</strong>累積<strong> 1 點 </strong>
+            消費<strong>100元</strong>累積<strong> 2 點 </strong>
+            依此類推
+          </div>
+        </div>
+
+        <section class="items">
+          <!-- 主打商品：正港鮮奶茶 -->
+          <article class="item-main" data-name="正港鮮奶茶(小)">
+            <img src="images/milk-tea-zhenggang.jpg" alt="正港鮮奶茶(小)" />
+            <div class="item-main-info">
+              <div class="item-main-name">正港鮮奶茶(小)</div>
+              <div class="item-main-points"><span>48</span>點</div>
+            </div>
+          </article>
+
+          <!-- 其他可兌換商品 -->
+          <div class="grid">
+            <article class="item-card" data-name="酷酷薯餅">
+              <img src="images/hash-brown.jpg" alt="酷酷薯餅" />
+              <div class="item-name">酷酷薯餅</div>
+              <div class="item-points"><span>30</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="黃黃柳橙汁(小)">
+              <img src="images/orange-juice-small.jpg" alt="黃黃柳橙汁(小)" />
+              <div class="item-name">黃黃柳橙汁(小)</div>
+              <div class="item-points"><span>30</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="極上奶茶(小)">
+              <img src="images/milk-tea-premium-small.jpg" alt="極上奶茶(小)" />
+              <div class="item-name">極上奶茶(小)</div>
+              <div class="item-points"><span>36</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="小熱狗">
+              <img src="images/mini-hotdog.jpg" alt="小熱狗" />
+              <div class="item-name">小熱狗</div>
+              <div class="item-points"><span>39</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="黃金雞塊">
+              <img src="images/chicken-nuggets.jpg" alt="黃金雞塊" />
+              <div class="item-name">黃金雞塊</div>
+              <div class="item-points"><span>42</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="港式蘿蔔糕">
+              <img src="images/hk-radish-cake.jpg" alt="港式蘿蔔糕" />
+              <div class="item-name">港式蘿蔔糕</div>
+              <div class="item-points"><span>48</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="雙色QQ球">
+              <img src="images/qq-ball.jpg" alt="雙色QQ球" />
+              <div class="item-name">雙色QQ球</div>
+              <div class="item-points"><span>48</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="美式炸餃">
+              <img src="images/fried-dumpling-western.jpg" alt="美式炸餃" />
+              <div class="item-name">美式炸餃</div>
+              <div class="item-points"><span>48</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="酥炸鍋貼">
+              <img src="images/fried-potsticker.jpg" alt="酥炸鍋貼" />
+              <div class="item-name">酥炸鍋貼</div>
+              <div class="item-points"><span>48</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="蜜糖風味法式吐司">
+              <img src="images/honey-french-toast.jpg" alt="蜜糖風味法式吐司" />
+              <div class="item-name">蜜糖風味法式吐司</div>
+              <div class="item-points"><span>48</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="脆脆薯條">
+              <img src="images/french-fries.jpg" alt="脆脆薯條" />
+              <div class="item-name">脆脆薯條</div>
+              <div class="item-points"><span>48</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="特濃雙色厚片">
+              <img
+                src="images/thick-toast-double-cheese.jpg"
+                alt="特濃雙色厚片"
+              />
+              <div class="item-name">特濃雙色厚片</div>
+              <div class="item-points"><span>54</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="特調咖啡">
+              <img src="images/coffee-special.jpg" alt="特調咖啡" />
+              <div class="item-name">特調咖啡</div>
+              <div class="item-points"><span>48</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="切達起司蛋乳酪餅">
+              <img
+                src="images/cheddar-egg-cheese-pie.jpg"
+                alt="切達起司蛋乳酪餅"
+              />
+              <div class="item-name">切達起司蛋乳酪餅</div>
+              <div class="item-points"><span>54</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="蔥香原味蛋抓餅">
+              <img src="images/scallion-egg-pancake.jpg" alt="蔥香原味蛋抓餅" />
+              <div class="item-name">蔥香原味蛋抓餅</div>
+              <div class="item-points"><span>54</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="椒鹽香雞蛋漢堡">
+              <img
+                src="images/pepper-chicken-burger.jpg"
+                alt="椒鹽香雞蛋漢堡"
+              />
+              <div class="item-name">椒鹽香雞蛋漢堡</div>
+              <div class="item-points"><span>66</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="酷酷薯餅蛋餅">
+              <img src="images/hash-brown-egg-pancake.jpg" alt="酷酷薯餅蛋餅" />
+              <div class="item-name">酷酷薯餅蛋餅</div>
+              <div class="item-points"><span>60</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="金炸雞排蛋捲餅">
+              <img
+                src="images/fried-chicken-roll-pancake.jpg"
+                alt="金炸雞排蛋捲餅"
+              />
+              <div class="item-name">金炸雞排蛋捲餅</div>
+              <div class="item-points"><span>72</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="蘑菇菇鐵板麵">
+              <img src="images/mushroom-iron-noodle.jpg" alt="蘑菇菇鐵板麵" />
+              <div class="item-name">蘑菇菇鐵板麵</div>
+              <div class="item-points"><span>72</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="黑胡椒鐵板麵">
+              <img
+                src="images/blackpepper-iron-noodle.jpg"
+                alt="黑胡椒鐵板麵"
+              />
+              <div class="item-name">黑胡椒鐵板麵</div>
+              <div class="item-points"><span>72</span>點</div>
+            </article>
+
+            <article class="item-card" data-name="經典六香鍋燒麵">
+              <img src="images/classic-pot-noodle.jpg" alt="經典六香鍋燒麵" />
+              <div class="item-name">經典六香鍋燒麵</div>
+              <div class="item-points"><span>78</span>點</div>
+            </article>
+          </div>
+        </section>
+        <br />
+        <footer class="footer">
+          因餐點為維持完整性原則供應，提供情形請依現場門市為主。<br />
+          本店保留隨時修改、變更、暫停或終止本活動內容之權利。
+          <div class="brand">早八滿堂 ZAOBAMANTANG</div>
+        </footer>
+      </section>
+    </main>
+
+    <!-- ========= MODAL ========= -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span id="modal-close">&times;</span>
+
+        <h2 id="modal-title"></h2>
+
+        <div
+          id="modal-points"
+          style="
+            font-size: 22px;
+            font-weight: 900;
+            color: #ff4b33;
+            margin: 4px 0 10px;
+          "
+        >
+          <!-- 動態塞入點數文字 -->
+        </div>
+
+        <img id="modal-product" src="" alt="餐點圖片" />
+
+        <p class="notice-text">
+          請確保您的會員點數足夠
+          <br />
+          並於結帳時出示本畫面供店員確認。
+        </p>
+
+        <p style="font-size: 16px; color: #444; margin-bottom: 8px">
+          兌換代碼：<strong id="modal-code" style="color: #222"></strong>
+        </p>
+
+        <img id="modal-qrcode" src="" alt="QR Code" />
+      </div>
+    </div>
+
+    <script>
+      // ====== MODAL SCRIPT ======
+      const modal = document.getElementById("modal");
+      const titleEl = document.getElementById("modal-title");
+      const pointsEl = document.getElementById("modal-points");
+      const codeEl = document.getElementById("modal-code");
+      const qrEl = document.getElementById("modal-qrcode");
+      const prodEl = document.getElementById("modal-product");
+      const cards = document.querySelectorAll(".item-main, .item-card");
+
+      cards.forEach((card, index) => {
+        card.addEventListener("click", () => {
+          const name =
+            card.dataset.name ||
+            card.querySelector(".item-main-name, .item-name")?.innerText ||
+            "";
+          const pointText =
+            card.querySelector(".item-main-points, .item-points")?.innerText ||
+            "";
+          const pointsNum = pointText.replace("點", "").trim();
+          const img = card.querySelector("img")?.getAttribute("src") || "";
+
+          const codeNum = index + 1; // coupons1 起算
+
+          titleEl.innerText = name;
+          pointsEl.innerHTML = `兌換點數：<span style="font-size:26px;">${pointsNum}</span>點`;
+          codeEl.innerText = `ZBM-coupons${codeNum}`;
+          prodEl.src = img;
+          qrEl.src = `qrcodes/coupons${codeNum}.jpg`;
+
+          modal.classList.add("show");
+        });
+      });
+
+      document.getElementById("modal-close").onclick = () =>
+        modal.classList.remove("show");
+      modal.onclick = (e) => {
+        if (e.target === modal) modal.classList.remove("show");
+      };
+    </script>
+  </body>
+</html>
