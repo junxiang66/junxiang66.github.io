@@ -67,7 +67,7 @@
       /* ====== RED AREA ====== */
       .content {
         background: var(--red);
-        padding: 24px 14px 16px;
+        padding: 14px 14px 12px; /* 📱 上下縮小 */
         color: #fff;
         position: relative;
       }
@@ -94,6 +94,8 @@
             transparent 18px
           );
         background-size: 160px 32px;
+        top: -24px; /* 原本 -22px，略往上推 */
+        height: 34px; /* 原本 32px，跟著增加 */
       }
       .rule-area {
         text-align: center;
@@ -253,6 +255,21 @@
         display: block;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
       }
+      .is-hidden {
+        display: none !important;
+      }
+      .redeem-alert {
+        background: #f4434f; /* 品牌紅 */
+        color: #ffffff; /* 白字 */
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin: 8px 0 12px;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.6;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(244, 67, 79, 0.35);
+      }
 
       @keyframes fade {
         from {
@@ -263,6 +280,79 @@
           opacity: 1;
           transform: scale(1);
         }
+      }
+      /* 查看我的點數 按鈕 */
+      .check-points-area {
+        text-align: center;
+        margin: 6px 0 8px;
+      }
+
+      .check-points-btn {
+        display: inline-block;
+        background: #ffffff;
+        color: #f4434f;
+        font-size: 15px;
+        font-weight: 900;
+        padding: 10px 22px;
+        border-radius: 999px;
+        text-decoration: none;
+        border: 2px solid #f4434f;
+        box-shadow: 0 4px 12px rgba(244, 67, 79, 0.25);
+        transition: all 0.2s ease;
+      }
+
+      .check-points-btn:hover {
+        background: #f4434f;
+        color: #ffffff;
+        transform: translateY(-1px);
+      }
+
+      /* Hero 內的集點說明膠囊 */
+      .hero-rule {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 10px 18px;
+        background: rgba(255, 255, 255, 0.88);
+        border-radius: 16px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #d32f2f;
+        line-height: 1.6;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      }
+
+      .hero-rule strong {
+        font-weight: 900;
+        color: #b71c1c;
+      }
+
+      .hero-rule-sub {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+        margin-top: 4px;
+      }
+      /* 點數兌換餐點 標題 */
+      .redeem-list-title {
+        margin: 6px 0 14px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 900;
+        color: #ffffff;
+        letter-spacing: 0.12em;
+        position: relative;
+      }
+
+      /* 下方細分隔線（不搶戲） */
+      .redeem-list-title::after {
+        content: "";
+        display: block;
+        width: 56px;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 999px;
+        margin: 6px auto 0;
       }
 
       /* ====== RWD ====== */
@@ -281,6 +371,23 @@
         #modal-product {
           max-width: 340px;
         }
+        .hero-rule {
+          font-size: 15px;
+          padding: 12px 22px;
+        }
+        .hero-rule-sub {
+          font-size: 14px;
+        }
+        .check-points-btn {
+          font-size: 16px;
+          padding: 12px 28px;
+        }
+        .redeem-list-title {
+          font-size: 20px;
+        }
+        .content {
+          padding: 24px 28px 20px; /* 🖥️ 桌機維持原本舒服感 */
+        }
       }
     </style>
   </head>
@@ -289,28 +396,28 @@
       <header class="hero">
         <div class="hero-title">消費集點</div>
         <div class="hero-sub">免費兌換餐點</div>
+        <div class="hero-rule">
+          <span>
+            消費 <strong>50元</strong> 累積 <strong>1 點</strong>　 消費
+            <strong>100元</strong> 累積 <strong>2 點</strong>
+          </span>
+          <span class="hero-rule-sub">
+            依此類推，消費越多回饋越多，趕快下訂早餐吧！
+          </span>
+        </div>
       </header>
 
       <section class="content">
-        <div class="rule-area">
-          <div
-            class="rule-tag"
-            style="
-              background: #ffb24b;
-              padding: 6px 16px;
-              border-radius: 999px;
-              font-weight: 900;
-            "
+        <div class="check-points-area">
+          <a
+            href="https://liff.line.me/1607331440-k4j4bmRe?type=member&cid=2170&hid=5069"
+            target="_blank"
+            class="check-points-btn"
           >
-            如何累積點數？
-          </div>
-          <div class="frule-text">
-            消費<strong>50元</strong>累積<strong> 1 點 </strong>
-            消費<strong>100元</strong>累積<strong> 2 點 </strong>
-            依此類推
-          </div>
+            查看我的點數
+          </a>
         </div>
-
+        <div class="redeem-list-title">可使用點數兌換的餐點</div>
         <section class="items">
           <!-- 主打商品：正港鮮奶茶 -->
           <article class="item-main" data-name="正港鮮奶茶(小)">
@@ -467,9 +574,12 @@
         </section>
         <br />
         <footer class="footer">
-          因餐點為維持完整性原則供應，提供情形請依現場門市為主。<br />
+          因餐點為維持完整性原則供應，供餐請依現場門市為主。<br />
           本店保留隨時修改、變更、暫停或終止本活動內容之權利。
-          <div class="brand">早八滿堂 ZAOBAMANTANG</div>
+          <div class="brand">
+            早八滿堂 ZAOBAMANTANG<br />
+            盈蓁餐飲事業有限公司 提供
+          </div>
         </footer>
       </section>
     </main>
@@ -500,16 +610,40 @@
           <br />
           並於結帳時出示本畫面供店員確認。
         </p>
+        <div id="redeem-disabled-note" class="redeem-alert">
+          目前暫不提供線上兌換、掃碼兌換<br />
+          請至門市委由店員人工核銷。
+        </div>
+        <div id="redeem-area">
+          <p style="font-size: 16px; color: #444; margin-bottom: 8px">
+            兌換代碼：<strong id="modal-code" style="color: #222"></strong>
+          </p>
 
-        <p style="font-size: 16px; color: #444; margin-bottom: 8px">
-          兌換代碼：<strong id="modal-code" style="color: #222"></strong>
-        </p>
-
-        <img id="modal-qrcode" src="" alt="QR Code" />
+          <img id="modal-qrcode" src="" alt="QR Code" />
+        </div>
       </div>
     </div>
 
     <script>
+      // ❌ 目前 POS 尚未支援掃碼，先隱藏兌換代碼與 QR Code
+      const ENABLE_QR_REDEEM = false;
+
+      const redeemArea = document.getElementById("redeem-area");
+
+      const redeemDisabledNote = document.getElementById(
+        "redeem-disabled-note"
+      );
+
+      // 初始化顯示狀態
+      if (!ENABLE_QR_REDEEM) {
+        if (redeemArea) redeemArea.classList.add("is-hidden"); // 隱藏 QR + 代碼
+        if (redeemDisabledNote)
+          redeemDisabledNote.classList.remove("is-hidden"); // 顯示提示
+      } else {
+        if (redeemArea) redeemArea.classList.remove("is-hidden");
+        if (redeemDisabledNote) redeemDisabledNote.classList.add("is-hidden");
+      }
+
       // ====== MODAL SCRIPT ======
       const modal = document.getElementById("modal");
       const titleEl = document.getElementById("modal-title");
