@@ -74,6 +74,14 @@
         letter-spacing: 0.02em;
       }
 
+      .brand-subtitle {
+        margin: 8px 0 0;
+        font-size: clamp(17px, 3.2vw, 23px);
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+      }
+
       .brand-logo {
         width: 112px;
         height: 112px;
@@ -89,10 +97,10 @@
 
       .store-card {
         display: grid;
-        grid-template-columns: 172px 1fr;
-        gap: 24px;
+        grid-template-columns: 140px 1fr;
+        gap: 20px;
         width: 100%;
-        padding: 22px 32px;
+        padding: 18px 32px;
         color: inherit;
         text-decoration: none;
         border: 0;
@@ -110,8 +118,8 @@
       }
 
       .store-photo {
-        width: 172px;
-        height: 172px;
+        width: 140px;
+        height: 140px;
         border-radius: 10px;
         overflow: hidden;
         background: #e5e7eb;
@@ -148,7 +156,7 @@
       }
 
       .store-title {
-        font-size: clamp(24px, 4.6vw, 34px);
+        font-size: clamp(20px, 3.8vw, 28px);
         font-weight: 900;
         letter-spacing: 0.01em;
         line-height: 1.2;
@@ -163,7 +171,7 @@
 
       .address,
       .phone {
-        font-size: clamp(21px, 4vw, 30px);
+        font-size: clamp(17px, 3.2vw, 23px);
         color: var(--text);
         line-height: 1.28;
         word-break: keep-all;
@@ -223,14 +231,14 @@
           border-radius: 12px;
         }
         .store-card {
-          grid-template-columns: 126px 1fr;
-          gap: 18px;
-          padding: 20px 24px;
+          grid-template-columns: 90px 1fr;
+          gap: 16px;
+          padding: 16px 24px;
         }
 
         .store-photo {
-          width: 126px;
-          height: 126px;
+          width: 90px;
+          height: 90px;
         }
 
         .hint {
@@ -241,13 +249,13 @@
 
       @media (max-width: 390px) {
         .store-card {
-          grid-template-columns: 104px 1fr;
-          gap: 14px;
+          grid-template-columns: 90px 1fr;
+          gap: 12px;
         }
 
         .store-photo {
-          width: 104px;
-          height: 104px;
+          width: 90px;
+          height: 90px;
         }
 
         .store-title-row {
@@ -262,7 +270,10 @@
 
       <section class="brand-section">
         <div class="brand-row">
-          <h1 class="brand-name">早八滿堂</h1>
+          <div>
+            <h1 class="brand-name">早八滿堂</h1>
+            <p class="brand-subtitle">請選擇您要訂餐的門市</p>
+          </div>
           <div class="brand-logo" aria-label="早八滿堂品牌LOGO"></div>
         </div>
       </section>
