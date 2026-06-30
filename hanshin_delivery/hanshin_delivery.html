@@ -71,6 +71,7 @@
         border: 4px solid #fff8ef;
         overflow: hidden;
       }
+
       .store-logo img {
         width: 100%;
         height: 100%;
@@ -93,6 +94,14 @@
         line-height: 1.5;
       }
 
+      .store-delivery-note {
+        margin: 8px 0 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: #d93025;
+        line-height: 1.5;
+      }
+
       @media (max-width: 480px) {
         .hero-image {
           height: 180px;
@@ -107,10 +116,6 @@
 
         .store-name {
           font-size: 28px;
-        }
-
-        .store-slogan {
-          font-size: 13px;
         }
       }
       /*
@@ -338,7 +343,7 @@
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.45);
-        z-index: 100;
+        z-index: 10000;
         align-items: flex-end;
       }
 
@@ -583,30 +588,207 @@
       }
 
       .message {
-        display: none;
-        margin-top: 12px;
-        padding: 12px;
-        border-radius: 12px;
-        line-height: 1.6;
+        position: fixed;
+        left: 50%;
+        bottom: calc(104px + env(safe-area-inset-bottom));
+        transform: translateX(-50%) translateY(20px);
+        z-index: 12000;
+
+        width: calc(100% - 32px);
+        max-width: 420px;
+        padding: 13px 16px;
+        border-radius: 14px;
+
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.45;
+        text-align: center;
+
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+
+        transition: opacity 0.25s ease, transform 0.25s ease,
+          visibility 0.25s ease;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+      }
+
+      .message.success,
+      .message.error {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
       }
 
       .message.success {
-        display: block;
-        background: #e8f8ef;
-        color: #1e8449;
-        border: 1px solid #a9dfbf;
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bde8cc;
       }
 
       .message.error {
-        display: block;
-        background: #fdecea;
+        background: #fff0f0;
         color: #c0392b;
-        border: 1px solid #f5b7b1;
+        border: 1px solid #f3c1c1;
+      }
+
+      .collapsible-notice {
+        position: relative;
+      }
+
+      .notice-title {
+        font-weight: 900;
+        margin-bottom: 8px;
+      }
+
+      .notice-preview {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #333;
+      }
+
+      .notice-full {
+        display: none;
+        margin-top: 4px;
+        font-size: 15px;
+        line-height: 1.75;
+        color: #333;
+      }
+
+      .notice-full p {
+        margin: 6px 0;
+      }
+
+      .notice-toggle {
+        margin-top: 10px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: #d35400;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #f4a340;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.45s ease, visibility 0.45s ease;
+      }
+
+      .loading-overlay.hide {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loading-content {
+        max-width: 340px;
+        text-align: center;
+        color: #fff;
+      }
+
+      .loading-title {
+        font-size: 26px;
+        font-weight: 900;
+        line-height: 1.4;
+        letter-spacing: 0.04em;
+        margin-bottom: 12px;
+      }
+
+      .loading-text {
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.7;
+        letter-spacing: 0.02em;
+        opacity: 0.92;
+      }
+
+      @media (max-width: 480px) {
+        .loading-title {
+          font-size: 24px;
+        }
+
+        .loading-text {
+          font-size: 16px;
+        }
+      }
+
+      .delivery-date-section {
+        margin: 0 auto;
+        padding: 14px 14px;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #f0e2d2;
+      }
+
+      .delivery-date-title {
+        font-size: 15px;
+        font-weight: 900;
+        color: #222;
+        margin-bottom: 10px;
+      }
+
+      .delivery-date-item {
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: #fff8ef;
+        margin-top: 8px;
+      }
+
+      .delivery-date-item:first-child {
+        margin-top: 0;
+      }
+
+      .delivery-date-main {
+        font-size: 15px;
+        font-weight: 900;
+        color: #222;
+        line-height: 1.4;
+      }
+
+      .delivery-date-sub {
+        margin-top: 4px;
+        font-size: 13px;
+        color: #777;
+        line-height: 1.5;
+      }
+
+      .no-delivery-date {
+        font-size: 14px;
+        color: #d93025;
+        font-weight: 800;
+        line-height: 1.6;
+      }
+
+      .collapsible-notice.expanded .notice-preview {
+        display: none;
+      }
+
+      .collapsible-notice.expanded .notice-full {
+        display: block;
       }
     </style>
   </head>
 
   <body>
+    <div id="messageBox" class="message"></div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-title">菜單載入中...</div>
+        <div class="loading-text" id="loadingText">請稍候...</div>
+      </div>
+    </div>
+
     <div class="container">
       <div class="store-header">
         <div class="hero-image">
@@ -618,21 +800,54 @@
             <img src="images/logo.png" alt="早八滿堂 LOGO" />
           </div>
 
-          <h1 class="store-name">早八滿堂</h1>
-          <p class="store-slogan">早餐還是得喝大冰奶</p>
+          <h1 class="store-name">早八滿堂-漢神州際午餐外送</h1>
+          <p class="store-delivery-note">
+            每週五固定午餐外送｜其他加開時段請以社群公告為主
+          </p>
+          <p class="store-slogan">🍔早餐還是得喝大冰奶🥤</p>
         </div>
       </div>
 
-      <div class="notice">
-        <strong>訂餐說明</strong><br />
-        ．訂單截止時間：週五上午 10:00<br />
-        ．配送時間：約 11:00–12:00 依樓層順路配送<br />
-        ．請務必填寫正確樓層、櫃位名稱與手機號碼
+      <div class="notice collapsible-notice" id="noticeBox">
+        <div class="notice-title">訂餐說明：</div>
+
+        <div class="notice-preview">
+          1️⃣ 每週五固定「午餐」外送，若加開外送趟次…
+        </div>
+
+        <div class="notice-full" id="noticeFull">
+          <p>
+            1️⃣
+            每週五固定「午餐」外送，若加開外送趟次、店休或暫停外送，會提前於社群公告。
+          </p>
+          <p>
+            2️⃣ 結單時間依當日公告為主，配送時間約 12:00–13:00
+            依樓層順路依序配送。
+          </p>
+          <p>3️⃣ 請務必填寫正確的「櫃位」與「樓層」，避免配送時找不到人。</p>
+          <p>
+            4️⃣
+            餐點皆為當日現做，外送過程可能會因路程、天氣與配送時間影響口感，我們會盡量安排好出餐與配送時間，不讓大家肚子餓，謝謝大家支持早八滿堂。
+          </p>
+          <p>5️⃣ 若有其他問題歡迎於社群提問，小編們將會解答你的困惑唷！</p>
+        </div>
+
+        <button class="notice-toggle" type="button" onclick="toggleNotice()">
+          查看更多 ⌄
+        </button>
+      </div>
+
+      <div
+        class="delivery-date-section"
+        id="deliveryDateSection"
+        style="display: none"
+      >
+        <div class="delivery-date-title">目前開放訂餐日期</div>
+        <div class="delivery-date-list" id="deliveryDateList"></div>
       </div>
 
       <div id="categoryNav" class="category-nav"></div>
       <div id="productSections"></div>
-      <div id="messageBox" class="message"></div>
     </div>
 
     <div class="cart-bar">
@@ -717,6 +932,13 @@
 
         <h3>訂購資料</h3>
 
+        <div class="form-group">
+          <label for="deliveryDate">訂餐日期 *</label>
+          <select id="deliveryDate" required>
+            <option value="">請選擇訂餐日期</option>
+          </select>
+        </div>
+
         <label>姓名 *</label>
         <input id="name" type="text" placeholder="例：王小姐" />
 
@@ -737,24 +959,15 @@
         </select>
 
         <label>櫃位名稱 *</label>
-        <input
-          id="counter"
-          type="text"
-          placeholder="例：某某品牌櫃 / 靠近哪個區域"
-        />
+        <input id="counter" type="text" placeholder="例：某某品牌櫃" />
 
         <label>付款方式 *</label>
         <select id="payment">
-          <option value="現場付款">現場付款</option>
-          <option value="LINE Pay">LINE Pay</option>
-          <option value="轉帳">轉帳</option>
+          <option value="現金付款">現金付款</option>
         </select>
 
         <label>備註</label>
-        <textarea
-          id="note"
-          placeholder="例：靠近手扶梯旁、請到櫃位門口"
-        ></textarea>
+        <textarea id="note" placeholder="例：靠近手扶梯旁、靠北側"></textarea>
 
         <button id="submitBtn" class="modal-action" onclick="submitOrder()">
           送出訂單
@@ -764,9 +977,10 @@
 
     <script>
       const GAS_URL =
-        "https://script.google.com/macros/s/AKfycbyvyeXvA2UG93s8ruXBna3ponofrVwoSFeB9uDWKKJoEoCiiHkbsGdO-E-_Ni2BTAbZ/exec";
+        "https://script.google.com/macros/s/AKfycbxo31KxAg40Jtf8HFEx4iCTbRJtILxC8ouyTx0PvktWuJkAtI9Wf6fCWOYYiKvKYAbV/exec";
       const SECRET_TOKEN = "zaoba_hanshin_2026";
       const IMAGE_BASE_PATH = "images/";
+      const ENABLE_LOADING = false; // 開發階段可先關閉；正式上線改成 true。
 
       let menuData = null;
       let cart = [];
@@ -778,30 +992,208 @@
       let currentComboQty = 1;
       let currentComboState = {};
 
+      const LOADING_MESSAGES = [
+        "早餐還是得喝大冰奶..雖然這是吃午餐",
+        "每過六十秒 世界上就過去了一分鐘",
+        "外送的台語叫瓦桑",
+        "據研究表明 人在睡著的時候是不清醒的",
+        "真的有人飲料喝正常冰全糖嗎？",
+        "賺錢就是為了要花錢",
+        "等等吃飽 業績也會爆 衝啊",
+        "分手代表對方配不上你(妳)",
+        "現在的努力是為了成為更好的自己",
+        "能吃是福 今天業績一定大富",
+        "這頓飯是開運餐 吃完等下客人塞滿櫃",
+        "現在吃得像皇帝 等下領抽成拿到手抽筋",
+        "站櫃已經很累 午餐就不要再煩惱",
+        "櫃姐櫃哥的午餐救星來啦",
+        "今天的午餐 交給早八滿堂處理",
+        "午餐選擇困難症 正在載入解方",
+        "餓著接客真的不行 趕快進食補充能量",
+        "服務一整天 午餐真的不能隨便吃...",
+        "電腦的媽媽是誰...？",
+        "你(妳)可以完整唸A到Z嗎？",
+        "還記得ㄅㄆㄇ的完整順序嗎？",
+        "現在的小朋友會聽周杰倫的歌嗎..？",
+        "寫完這首歌我就會放下你了",
+        "這年頭買房不易..大家加油ＱＱ",
+      ];
+
+      const loadingStartTime = Date.now();
+
+      function showRandomLoadingText() {
+        const loadingText = document.getElementById("loadingText");
+        if (!loadingText) return;
+
+        const randomIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
+        loadingText.textContent = LOADING_MESSAGES[randomIndex];
+      }
+
+      function renderDeliveryDates() {
+        const section = document.getElementById("deliveryDateSection");
+        const list = document.getElementById("deliveryDateList");
+
+        if (!section || !list || !menuData) return;
+
+        const deliveryDates = Array.isArray(menuData.deliveryDates)
+          ? menuData.deliveryDates
+          : [];
+
+        section.style.display = "block";
+
+        if (!deliveryDates.length) {
+          list.innerHTML = `
+            <div class="no-delivery-date">
+              目前尚未開放訂餐，請以 LINE 社群公告為主。
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = deliveryDates
+          .map((item) => {
+            const dateLabel = formatDeliveryDateLabel(item.deliveryDate);
+            const title = item.title || "午餐外送";
+            const cutoffTime = formatDisplayTime(item.cutoffTime);
+            const deliveryTime = formatDisplayTime(item.deliveryTime);
+
+            const subItems = [];
+            if (cutoffTime)
+              subItems.push(`結單時間：${escapeHtml(cutoffTime)}`);
+            if (deliveryTime)
+              subItems.push(`預計配送時間：${escapeHtml(deliveryTime)}`);
+
+            return `
+              <div class="delivery-date-item">
+                <div class="delivery-date-main">
+                  ${escapeHtml(dateLabel)}｜${escapeHtml(title)}
+                </div>
+                ${
+                  subItems.length
+                    ? `<div class="delivery-date-sub">${subItems.join(
+                        "｜"
+                      )}</div>`
+                    : ""
+                }
+                ${
+                  item.desc
+                    ? `<div class="delivery-date-sub">${escapeHtml(
+                        item.desc
+                      )}</div>`
+                    : ""
+                }
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function formatDeliveryDateLabel(dateString) {
+        if (!dateString) return "";
+
+        const parts = dateString.split("-");
+        if (parts.length !== 3) return dateString;
+
+        const year = Number(parts[0]);
+        const month = Number(parts[1]);
+        const day = Number(parts[2]);
+
+        const date = new Date(year, month - 1, day);
+        const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+        const week = weekdays[date.getDay()];
+
+        return `${month}/${day}（${week}）`;
+      }
+
+      function formatDisplayTime(value) {
+        if (!value) return "";
+
+        if (value instanceof Date && !isNaN(value)) {
+          return `${String(value.getHours()).padStart(2, "0")}:${String(
+            value.getMinutes()
+          ).padStart(2, "0")}`;
+        }
+
+        const text = String(value).trim();
+        if (!text) return "";
+
+        // Apps Script 若直接把試算表時間轉成字串，可能會變成：
+        // Sat Dec 30 1899 11:30:00 GMT+0800 (台北標準時間)
+        const longDateTimeMatch = text.match(/\b(\d{1,2}):(\d{2}):\d{2}\b/);
+        if (text.includes("GMT") && longDateTimeMatch) {
+          return `${longDateTimeMatch[1].padStart(2, "0")}:${
+            longDateTimeMatch[2]
+          }`;
+        }
+
+        // ISO 字串，例如 1899-12-30T03:30:00.000Z
+        if (/^\d{4}-\d{2}-\d{2}T/.test(text)) {
+          const date = new Date(text);
+          if (!isNaN(date)) {
+            return `${String(date.getHours()).padStart(2, "0")}:${String(
+              date.getMinutes()
+            ).padStart(2, "0")}`;
+          }
+        }
+
+        return text;
+      }
+
+      function hideLoadingOverlay() {
+        const overlay = document.getElementById("loadingOverlay");
+        if (!overlay) return;
+
+        overlay.classList.add("hide");
+
+        setTimeout(() => {
+          overlay.style.display = "none";
+        }, 500);
+      }
+
+      function hideLoadingOverlayWithMinimumTime() {
+        const minimumTime = 800;
+        const elapsed = Date.now() - loadingStartTime;
+        const remaining = Math.max(0, minimumTime - elapsed);
+
+        setTimeout(() => {
+          hideLoadingOverlay();
+        }, remaining);
+      }
+
       function loadMenuConfig() {
-        const callbackName = "handleMenuConfig_" + Date.now();
+        if (ENABLE_LOADING) {
+          showRandomLoadingText();
+        } else {
+          hideLoadingOverlay();
+        }
+
+        const callbackName = "handleMenuConfig";
 
         window[callbackName] = function (data) {
           console.log("Apps Script 回傳資料", data);
 
           if (!data.success) {
-            showMessage("商品資料讀取失敗：" + (data.message || ""), "error");
+            showMessage("商品資料讀取失敗。", "error");
+            if (ENABLE_LOADING) hideLoadingOverlayWithMinimumTime();
             return;
           }
 
           menuData = data;
+          renderDeliveryDates();
           renderCategoryNav();
           renderProducts();
+
+          if (ENABLE_LOADING) hideLoadingOverlayWithMinimumTime();
         };
 
         const script = document.createElement("script");
         script.src = `${GAS_URL}?action=config&callback=${callbackName}`;
+
         script.onerror = function () {
-          showMessage(
-            "商品資料載入失敗，請檢查 Apps Script 部署網址。",
-            "error"
-          );
+          showMessage("菜單載入失敗，請重新整理頁面。", "error");
+          if (ENABLE_LOADING) hideLoadingOverlayWithMinimumTime();
         };
+
         document.body.appendChild(script);
       }
 
@@ -1579,6 +1971,52 @@
         return true;
       }
 
+      function renderDeliveryDateSelect() {
+        const select = document.getElementById("deliveryDate");
+        if (!select) return;
+
+        const deliveryDates = menuData.deliveryDates || [];
+
+        if (!deliveryDates.length) {
+          select.innerHTML = `<option value="">目前尚未開放訂餐</option>`;
+          select.disabled = true;
+          return;
+        }
+
+        if (deliveryDates.length === 1) {
+          const item = deliveryDates[0];
+          const label = `${formatDeliveryDateLabel(item.deliveryDate)}｜${
+            item.title || "午餐外送"
+          }`;
+
+          select.innerHTML = `
+      <option value="${escapeHtml(item.deliveryDate)}" selected>
+        ${escapeHtml(label)}
+      </option>
+    `;
+          select.disabled = false;
+          return;
+        }
+
+        select.innerHTML = `
+    <option value="">請選擇訂餐日期</option>
+    ${deliveryDates
+      .map((item) => {
+        const label = `${formatDeliveryDateLabel(item.deliveryDate)}｜${
+          item.title || "午餐外送"
+        }`;
+        return `
+          <option value="${escapeHtml(item.deliveryDate)}">
+            ${escapeHtml(label)}
+          </option>
+        `;
+      })
+      .join("")}
+  `;
+
+        select.disabled = false;
+      }
+
       function calculateComboUnitPrice() {
         if (!currentCombo) return 0;
 
@@ -1683,6 +2121,7 @@
 
       function openCartModal() {
         renderCartModal();
+        renderDeliveryDateSelect();
         document.getElementById("cartModalOverlay").classList.add("show");
       }
 
@@ -1783,16 +2222,45 @@
         renderCartModal();
       }
 
+      function getSelectedDeliveryDateInfo(deliveryDate) {
+        const deliveryDates =
+          menuData && Array.isArray(menuData.deliveryDates)
+            ? menuData.deliveryDates
+            : [];
+
+        return (
+          deliveryDates.find((item) => item.deliveryDate === deliveryDate) ||
+          null
+        );
+      }
+
       function validateOrder() {
         if (cart.length === 0) {
           showMessage("購物車目前是空的。", "error");
           return false;
         }
 
-        const name = document.getElementById("name").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const floor = document.getElementById("floor").value;
-        const counter = document.getElementById("counter").value.trim();
+        const deliveryDates =
+          menuData && Array.isArray(menuData.deliveryDates)
+            ? menuData.deliveryDates
+            : [];
+
+        if (!deliveryDates.length) {
+          showMessage("目前尚未開放訂餐，請以 LINE 社群公告為主。", "error");
+          return false;
+        }
+
+        const deliveryDate =
+          document.getElementById("deliveryDate")?.value || "";
+        const name = document.getElementById("name")?.value.trim() || "";
+        const phone = document.getElementById("phone")?.value.trim() || "";
+        const floor = document.getElementById("floor")?.value || "";
+        const counter = document.getElementById("counter")?.value.trim() || "";
+
+        if (!deliveryDate) {
+          showMessage("請選擇訂餐日期。", "error");
+          return false;
+        }
 
         if (!name) {
           showMessage("請填寫姓名。", "error");
@@ -1817,28 +2285,58 @@
         return true;
       }
 
-      async function submitOrder() {
+      async function submitOrder(event) {
+        if (event && typeof event.preventDefault === "function") {
+          event.preventDefault();
+        }
+
         if (!validateOrder()) return;
 
-        const submitBtn = document.getElementById("submitBtn");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "訂單送出中...";
+        const deliveryDate =
+          document.getElementById("deliveryDate")?.value || "";
+        const selectedDelivery = getSelectedDeliveryDateInfo(deliveryDate);
 
-        const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
+        const customerName =
+          document.getElementById("name")?.value.trim() || "";
+        const phone = document.getElementById("phone")?.value.trim() || "";
+        const floor = document.getElementById("floor")?.value || "";
+        const counter = document.getElementById("counter")?.value.trim() || "";
+        const payment = document.getElementById("payment")?.value || "現場付款";
+        const note = document.getElementById("note")?.value.trim() || "";
+
+        const submitBtn = document.getElementById("submitBtn");
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "訂單送出中...";
+        }
+
+        const totalQty = cart.reduce(
+          (sum, item) => sum + Number(item.qty || 0),
+          0
+        );
+        const total = cart.reduce(
+          (sum, item) => sum + Number(item.subtotal || 0),
+          0
+        );
 
         const orderData = {
           source: "hanshin_order_page",
           token: SECRET_TOKEN,
+          deliveryDate: deliveryDate,
+          deliveryTitle: selectedDelivery ? selectedDelivery.title : "",
+          deliveryTime: selectedDelivery ? selectedDelivery.deliveryTime : "",
           customer: {
-            name: document.getElementById("name").value.trim(),
-            phone: document.getElementById("phone").value.trim(),
-            floor: document.getElementById("floor").value,
-            counter: document.getElementById("counter").value.trim(),
-            payment: document.getElementById("payment").value,
-            note: document.getElementById("note").value.trim(),
+            name: customerName,
+            phone: phone,
+            floor: floor,
+            counter: counter,
+            payment: payment,
+            note: note,
           },
           items: cart,
-          total,
+          totalQty: totalQty,
+          totalAmount: total,
+          total: total,
         };
 
         try {
@@ -1857,6 +2355,9 @@
           renderCartModal();
           closeCartModal();
 
+          const deliveryDateEl = document.getElementById("deliveryDate");
+          if (deliveryDateEl) deliveryDateEl.value = "";
+
           document.getElementById("name").value = "";
           document.getElementById("phone").value = "";
           document.getElementById("floor").value = "";
@@ -1867,18 +2368,29 @@
           console.error(error);
           showMessage("訂單送出失敗，請稍後再試或聯絡店家。", "error");
         } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "送出訂單";
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "送出訂單";
+          }
         }
       }
 
+      let messageTimer = null;
+
       function showMessage(text, type) {
         const messageBox = document.getElementById("messageBox");
+        if (!messageBox) return;
+
+        if (messageTimer) {
+          clearTimeout(messageTimer);
+        }
+
         messageBox.textContent = text;
         messageBox.className = `message ${type}`;
 
-        setTimeout(() => {
+        messageTimer = setTimeout(() => {
           messageBox.className = "message";
+          messageTimer = null;
         }, 3000);
       }
 
@@ -1931,6 +2443,17 @@
             closeCartModal();
           }
         });
+      }
+
+      function toggleNotice() {
+        const noticeBox = document.getElementById("noticeBox");
+        const toggleBtn = noticeBox.querySelector(".notice-toggle");
+
+        noticeBox.classList.toggle("expanded");
+
+        const isExpanded = noticeBox.classList.contains("expanded");
+
+        toggleBtn.textContent = isExpanded ? "收合說明 ⌃" : "查看更多 ⌄";
       }
 
       setupModalOverlayClose();
