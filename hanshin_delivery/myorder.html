@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>早八滿堂｜漢神外送小編看單後台</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC",
+          "Segoe UI", sans-serif;
+        background: #fff8ef;
+        color: #333;
+      }
+
+      .page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      }
+
+      .header h1 {
+        margin: 0 0 8px;
+        font-size: 24px;
+        color: #222;
+      }
+
+      .header p {
+        margin: 0;
+        color: #777;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .toolbar {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 16px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+
+      input[type="date"] {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        font-size: 16px;
+        background: #fff;
+        min-height: 46px;
+      }
+
+      button {
+        border: none;
+        border-radius: 12px;
+        padding: 12px 18px;
+        background: #f28c28;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        min-height: 46px;
+        white-space: nowrap;
+      }
+
+      button:hover {
+        background: #e17d1d;
+      }
+
+      button:disabled {
+        background: #bbb;
+        cursor: not-allowed;
+      }
+
+      .print-btn {
+        background: #555;
+      }
+
+      .print-btn:hover {
+        background: #444;
+      }
+
+      .summary {
+        background: #fff;
+        border-radius: 18px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        font-size: 15px;
+        line-height: 1.8;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      }
+
+      .summary strong {
+        color: #f28c28;
+      }
+
+      .order-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        border-left: 6px solid #f28c28;
+      }
+
+      .order-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+      }
+
+      .order-id {
+        font-size: 18px;
+        font-weight: 800;
+        color: #222;
+        word-break: break-all;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        background: #fff3df;
+        color: #b65f00;
+        white-space: nowrap;
+      }
+
+      .status.paid {
+        background: #e8f7ee;
+        color: #168348;
+      }
+
+      .status.unpaid {
+        background: #fff0f0;
+        color: #c62828;
+      }
+
+      .customer-info {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.9;
+        margin-top: 8px;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px 18px;
+      }
+
+      .info-item {
+        word-break: break-word;
+      }
+
+      .label {
+        color: #999;
+        font-size: 13px;
+      }
+
+      .value {
+        color: #333;
+        font-weight: 600;
+      }
+
+      .meal-section-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #222;
+        margin: 12px 0 8px;
+      }
+
+      .meal-content {
+        padding: 10px 12px;
+        background: #fffaf3;
+        border-radius: 14px;
+        font-size: 16px;
+        line-height: 1.8;
+        border: 1px solid #f5e4cc;
+        word-break: break-word;
+      }
+
+      .meal-line {
+        padding: 8px 0;
+        border-bottom: 1px dashed #ddd;
+        white-space: normal;
+        word-break: break-word;
+        font-weight: 600;
+      }
+
+      .meal-line:last-child {
+        border-bottom: none;
+      }
+
+      .meal-line:last-child {
+        border-bottom: none;
+      }
+
+      .note {
+        margin-top: 12px;
+        padding: 10px 12px;
+        background: #fff7e6;
+        border-radius: 12px;
+        font-size: 14px;
+        color: #8a5200;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .order-footer {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #eee;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        font-size: 14px;
+        color: #555;
+        line-height: 1.6;
+      }
+
+      .total {
+        text-align: right;
+        font-size: 18px;
+        font-weight: 800;
+        color: #222;
+      }
+
+      .empty {
+        text-align: center;
+        color: #888;
+        padding: 40px 20px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      }
+
+      .loading {
+        text-align: center;
+        color: #777;
+        padding: 30px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      }
+
+      .error {
+        background: #fff0f0;
+        color: #c62828;
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 16px;
+        font-weight: 600;
+        line-height: 1.6;
+      }
+
+      .hint {
+        background: #fff;
+        color: #777;
+        border-radius: 14px;
+        padding: 16px;
+        line-height: 1.7;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      }
+
+      .empty-meal {
+        color: #999;
+        padding: 8px 0;
+      }
+
+      @media (max-width: 700px) {
+        .page {
+          padding: 14px;
+        }
+
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        input[type="date"],
+        button {
+          width: 100%;
+        }
+
+        .order-top {
+          flex-direction: column;
+        }
+
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .order-footer {
+          grid-template-columns: 1fr;
+        }
+
+        .total {
+          text-align: left;
+        }
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+
+        .toolbar,
+        .print-btn,
+        .header p {
+          display: none !important;
+        }
+
+        .page {
+          max-width: none;
+          padding: 0;
+        }
+
+        .header,
+        .summary,
+        .order-card,
+        .empty,
+        .loading,
+        .hint {
+          box-shadow: none;
+        }
+
+        .header {
+          padding: 0 0 12px;
+          margin-bottom: 12px;
+        }
+
+        .order-card {
+          break-inside: avoid;
+          page-break-inside: avoid;
+          border: 1px solid #ddd;
+          border-left: 6px solid #000;
+        }
+
+        .meal-content {
+          background: #fff;
+          border: 1px solid #ddd;
+        }
+      }
+
+      .order-card {
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .order-card:hover {
+        transform: translateY(-1px);
+      }
+
+      .order-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .order-summary-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .order-summary-sub {
+        font-size: 13px;
+        color: #888;
+      }
+
+      .expand-icon {
+        font-size: 18px;
+        color: #999;
+        transition: transform 0.2s ease;
+      }
+
+      .order-card.expanded .expand-icon {
+        transform: rotate(180deg);
+      }
+
+      .order-detail {
+        display: none;
+        margin-top: 14px;
+      }
+
+      .order-card.expanded .order-detail {
+        display: block;
+      }
+
+      .order-card.collapsed {
+        padding: 16px 18px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <div class="header">
+        <h1>早八滿堂｜漢神外送小編看單後台</h1>
+        <p>
+          選擇訂餐日期後，可查看該日期所有漢神外送訂單，方便小編 key
+          單給門市製作餐點。
+        </p>
+      </div>
+
+      <div class="toolbar">
+        <input type="date" id="orderDate" />
+        <button id="searchBtn" onclick="loadOrders()">查詢訂單</button>
+        <button class="print-btn" onclick="window.print()">列印</button>
+      </div>
+
+      <div id="message"></div>
+      <div id="summary"></div>
+      <div id="orders">
+        <div class="hint">請先選擇訂餐日期，然後按「查詢訂單」。</div>
+      </div>
+    </div>
+
+    <script>
+      const GAS_URL =
+        "https://script.google.com/macros/s/AKfycbyeBqAhkGONJrnCDIp_RfHtFaPJSTOMw4bW5fQPKhwS46m7vPKrEyYivaIQX4JWSZAw/exec";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setDefaultDateToday();
+      });
+
+      function setDefaultDateToday() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, "0");
+        const dd = String(today.getDate()).padStart(2, "0");
+
+        document.getElementById("orderDate").value = `${yyyy}-${mm}-${dd}`;
+      }
+
+      async function loadOrders() {
+        const orderDate = document.getElementById("orderDate").value;
+        const searchBtn = document.getElementById("searchBtn");
+        const messageEl = document.getElementById("message");
+        const summaryEl = document.getElementById("summary");
+        const ordersEl = document.getElementById("orders");
+
+        messageEl.innerHTML = "";
+        summaryEl.innerHTML = "";
+        ordersEl.innerHTML = "";
+
+        if (!orderDate) {
+          showError("請先選擇訂餐日期");
+          return;
+        }
+
+        if (!GAS_URL || GAS_URL === "請貼上你的Apps Script部署網址") {
+          showError("尚未設定 GAS_URL，請先貼上 Apps Script 部署網址。");
+          return;
+        }
+
+        searchBtn.disabled = true;
+        searchBtn.textContent = "查詢中...";
+
+        ordersEl.innerHTML = `<div class="loading">正在讀取 ${escapeHtml(
+          orderDate
+        )} 的訂單...</div>`;
+
+        try {
+          const url = `${GAS_URL}?action=getOrdersByDate&orderDate=${encodeURIComponent(
+            orderDate
+          )}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          console.log("GAS 回傳資料：", data);
+
+          if (!data.success) {
+            throw new Error(data.message || "讀取失敗");
+          }
+
+          renderOrders(data);
+        } catch (err) {
+          ordersEl.innerHTML = "";
+          showError(err.message || "系統發生錯誤，請稍後再試");
+        } finally {
+          searchBtn.disabled = false;
+          searchBtn.textContent = "查詢訂單";
+        }
+      }
+
+      function renderOrders(data) {
+        const summaryEl = document.getElementById("summary");
+        const ordersEl = document.getElementById("orders");
+
+        const orders = data.orders || [];
+        const totalAmount = orders.reduce(
+          (sum, order) => sum + Number(order.totalAmount || 0),
+          0
+        );
+        const totalQty = orders.reduce(
+          (sum, order) => sum + Number(order.totalQty || 0),
+          0
+        );
+
+        summaryEl.innerHTML = `
+        <div class="summary">
+          訂餐日期：<strong>${escapeHtml(data.orderDate || "")}</strong><br>
+          訂單數量：<strong>${orders.length}</strong> 筆<br>
+          餐點總數：<strong>${totalQty}</strong> 份<br>
+          總金額：<strong>$${formatMoney(totalAmount)}</strong>
+        </div>
+      `;
+
+        if (orders.length === 0) {
+          ordersEl.innerHTML = `
+          <div class="empty">
+            這個日期目前沒有外送訂單
+          </div>
+        `;
+          return;
+        }
+
+        ordersEl.innerHTML = orders
+          .map((order, index) => {
+            const paymentStatusClass = getPaymentStatusClass(
+              order.paymentStatus
+            );
+            const deliveryStatusText = order.deliveryStatus || "未處理";
+            const cardId = `order-card-${index}`;
+
+            return `
+    <div class="order-card collapsed" id="${cardId}" onclick="toggleOrderCard('${cardId}')">
+      <div class="order-summary-row">
+        <div class="order-summary-left">
+          <div class="order-id">訂單編號：${escapeHtml(order.orderId)}</div>
+          <div class="order-summary-sub">
+            ${escapeHtml(order.customerName)}｜${escapeHtml(
+              order.floor
+            )}｜${escapeHtml(order.counter)}｜共 ${escapeHtml(
+              order.totalQty
+            )} 份｜$${formatMoney(order.totalAmount)}
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="status">${escapeHtml(deliveryStatusText)}</div>
+          <div class="expand-icon">⌄</div>
+        </div>
+      </div>
+
+      <div class="order-detail" onclick="event.stopPropagation()">
+        <div class="customer-info">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">姓名：</span>
+              <span class="value">${escapeHtml(order.customerName)}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">手機：</span>
+              <span class="value">${escapeHtml(order.phone)}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">樓層：</span>
+              <span class="value">${escapeHtml(order.floor)}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">櫃位：</span>
+              <span class="value">${escapeHtml(order.counter)}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">訂餐場次：</span>
+              <span class="value">${escapeHtml(order.session)}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">配送時段：</span>
+              <span class="value">${escapeHtml(order.deliveryTime)}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">付款方式：</span>
+              <span class="value">${escapeHtml(order.paymentMethod)}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">付款狀態：</span>
+              <span class="value ${paymentStatusClass}">${escapeHtml(
+              order.paymentStatus
+            )}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">訂單時間：</span>
+              <span class="value">${escapeHtml(order.orderTime)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="meal-section-title">餐點內容</div>
+
+        <div class="meal-content">
+          ${formatMealContent(order.mealContent)}
+        </div>
+
+        ${
+          order.note
+            ? `<div class="note">備註：${escapeHtml(order.note)}</div>`
+            : ""
+        }
+
+        <div class="order-footer">
+          <div>
+            <span class="label">總數量：</span>
+            <span class="value">${escapeHtml(order.totalQty)}</span>
+          </div>
+
+          <div>
+            <span class="label">總金額：</span>
+            <span class="value">$${formatMoney(order.totalAmount)}</span>
+          </div>
+
+          <div class="total">
+            共 ${escapeHtml(order.totalQty)} 份｜$${formatMoney(
+              order.totalAmount
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+          })
+          .join("");
+      }
+
+      function formatMealContent(text) {
+        if (!text) {
+          return '<div class="empty-meal">無餐點內容</div>';
+        }
+
+        let mealText = String(text).trim();
+
+        // 先把常見分隔符號統一成換行
+        mealText = mealText
+          .replaceAll("｜", "\n")
+          .replaceAll("|", "\n")
+          .replaceAll("、", "\n")
+          .replaceAll("；", "\n")
+          .replaceAll(";", "\n");
+
+        // 如果你的餐點內容是用「+」分隔，也可以打開這行
+        // mealText = mealText.replaceAll(' + ', '\n');
+
+        return mealText
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter((line) => line !== "")
+          .map((line) => `<div class="meal-line">${escapeHtml(line)}</div>`)
+          .join("");
+      }
+
+      function toggleOrderCard(cardId) {
+        const card = document.getElementById(cardId);
+
+        if (!card) return;
+
+        card.classList.toggle("expanded");
+        card.classList.toggle("collapsed");
+      }
+
+      function getPaymentStatusClass(paymentStatus) {
+        const text = String(paymentStatus || "");
+
+        if (
+          text.includes("已付款") ||
+          text.includes("已收款") ||
+          text.includes("完成")
+        ) {
+          return "paid";
+        }
+
+        if (text.includes("未付款") || text.includes("未收款")) {
+          return "unpaid";
+        }
+
+        return "";
+      }
+
+      function showError(text) {
+        document.getElementById("message").innerHTML = `
+        <div class="error">${escapeHtml(text)}</div>
+      `;
+      }
+
+      function formatMoney(value) {
+        const num = Number(value || 0);
+        return num.toLocaleString("zh-TW");
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+    </script>
+  </body>
+</html>
