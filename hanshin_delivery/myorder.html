@@ -200,21 +200,17 @@
         background: #fffaf3;
         border-radius: 14px;
         font-size: 16px;
-        line-height: 1.8;
+        line-height: 1.6;
         border: 1px solid #f5e4cc;
         word-break: break-word;
       }
 
       .meal-line {
-        padding: 8px 0;
+        padding: 10px 0;
         border-bottom: 1px dashed #ddd;
         white-space: normal;
         word-break: break-word;
         font-weight: 600;
-      }
-
-      .meal-line:last-child {
-        border-bottom: none;
       }
 
       .meal-line:last-child {
@@ -418,6 +414,16 @@
       .order-card.collapsed {
         padding: 16px 18px;
       }
+
+      .value.paid {
+        color: #168348;
+        font-weight: 800;
+      }
+
+      .value.unpaid {
+        color: #c62828;
+        font-weight: 800;
+      }
     </style>
   </head>
 
@@ -446,7 +452,8 @@
 
     <script>
       const GAS_URL =
-        "https://script.google.com/macros/s/AKfycbyeBqAhkGONJrnCDIp_RfHtFaPJSTOMw4bW5fQPKhwS46m7vPKrEyYivaIQX4JWSZAw/exec";
+        "https://script.google.com/macros/s/AKfycbzUAlPT9gnDAV9tt7sltf6Qe9-1DCuM_ztlNVMOeoD1wltwsc8LW57_ZCIyZ8jBY_0m/exec";
+      let dynamicLabelNames = [];
 
       document.addEventListener("DOMContentLoaded", () => {
         setDefaultDateToday();
@@ -516,6 +523,7 @@
         const ordersEl = document.getElementById("orders");
 
         const orders = data.orders || [];
+        dynamicLabelNames = data.labelNames || [];
         const totalAmount = orders.reduce(
           (sum, order) => sum + Number(order.totalAmount || 0),
           0
@@ -626,7 +634,7 @@
         <div class="meal-section-title">餐點內容</div>
 
         <div class="meal-content">
-          ${formatMealContent(order.mealContent)}
+          ${formatMealContent(order)}
         </div>
 
         ${
@@ -659,26 +667,119 @@
           .join("");
       }
 
-      function formatMealContent(text) {
+      function formatMealContent(order) {
+        if (!order) {
+          return '<div class="empty-meal">無餐點內容</div>';
+        }
+
+        const jsonDetail = order.jsonDetail;
+
+        // 優先使用 JSON明細，這是最穩的做法
+        if (jsonDetail) {
+          try {
+            const data = JSON.parse(jsonDetail);
+            const items = data.items || [];
+
+            if (items.length > 0) {
+              return items
+                .map(
+                  (item) =>
+                    `<div class="meal-line">${escapeHtml(
+                      formatItemFromJson(item)
+                    )}</div>`
+                )
+                .join("");
+            }
+          } catch (err) {
+            console.warn("JSON明細解析失敗，改用餐點內容文字：", err);
+          }
+        }
+
+        // 如果 JSON明細壞掉，才退回使用餐點內容文字
+        return formatMealContentFallback(order.mealContent);
+      }
+
+      function formatItemFromJson(item) {
+        const name = item.name || "";
+        const qty = item.qty || 1;
+
+        // 套餐
+        if (item.type === "combo" && Array.isArray(item.comboGroups)) {
+          const comboParts = [];
+
+          item.comboGroups.forEach((group) => {
+            const selectedProducts = group.selectedProducts || [];
+
+            selectedProducts.forEach((product) => {
+              const productName = formatNameWithPrice(
+                product.name,
+                product.priceDelta
+              );
+              const optionParts = formatOptions(product.options || []);
+
+              if (optionParts.length > 0) {
+                comboParts.push(`${productName}（${optionParts.join("、")}）`);
+              } else {
+                comboParts.push(productName);
+              }
+            });
+          });
+
+          if (comboParts.length > 0) {
+            return `${name}【${comboParts.join("；")}】 x${qty}`;
+          }
+
+          return `${name} x${qty}`;
+        }
+
+        // 一般單點商品
+        const optionParts = formatOptions(item.options || []);
+
+        if (optionParts.length > 0) {
+          return `${name}（${optionParts.join("、")}） x${qty}`;
+        }
+
+        return `${name} x${qty}`;
+      }
+
+      function formatOptions(options) {
+        return options
+          .map((option) => {
+            return formatNameWithPrice(option.optionName, option.priceDelta);
+          })
+          .filter((text) => text !== "");
+      }
+
+      function formatNameWithPrice(name, priceDelta) {
+        let text = String(name || "").trim();
+        const price = Number(priceDelta || 0);
+
+        if (!text) return "";
+
+        // 避免原本已經有 +$10，又被重複加一次
+        const alreadyHasPrice = /\+\$\d+/.test(text);
+
+        if (price > 0 && !alreadyHasPrice) {
+          text += `+$${price}`;
+        }
+
+        return text;
+      }
+
+      function formatMealContentFallback(text) {
         if (!text) {
           return '<div class="empty-meal">無餐點內容</div>';
         }
 
         let mealText = String(text).trim();
 
-        // 先把常見分隔符號統一成換行
-        mealText = mealText
-          .replaceAll("｜", "\n")
-          .replaceAll("|", "\n")
-          .replaceAll("、", "\n")
-          .replaceAll("；", "\n")
-          .replaceAll(";", "\n");
+        mealText = mealText.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
 
-        // 如果你的餐點內容是用「+」分隔，也可以打開這行
-        // mealText = mealText.replaceAll(' + ', '\n');
+        mealText = mealText.replace(/([xX×]\s*\d+)\s*[、，｜|;；]\s*/g, "$1\n");
+        mealText = mealText.replace(/([xX×]\s*\d+)\s+(?=[^\n])/g, "$1\n");
 
         return mealText
-          .split(/\r?\n/)
+          .split(/\n+/)
           .map((line) => line.trim())
           .filter((line) => line !== "")
           .map((line) => `<div class="meal-line">${escapeHtml(line)}</div>`)
