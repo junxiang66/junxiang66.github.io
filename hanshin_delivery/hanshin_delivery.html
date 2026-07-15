@@ -173,13 +173,19 @@
         cursor: pointer;
       }
 
+      .category-nav button.active {
+        background: #ff7900;
+        color: #fff;
+        border-color: #ff7900;
+      }
+
       .category-heading {
-        margin: 32px 16px 10px;
+        margin: 24px 8px 10px;
       }
 
       .category-title {
         margin: 0;
-        font-size: 26px;
+        font-size: 22px;
         font-weight: 900;
         color: #222;
         line-height: 1.3;
@@ -195,7 +201,7 @@
       .product-card {
         background: #fff;
         border-bottom: 1px solid #eeeeee;
-        padding: 18px 16px;
+        padding: 12px 10px;
         display: grid;
         grid-template-columns: 1fr 112px;
         gap: 16px;
@@ -226,14 +232,14 @@
 
       .product-name {
         margin: 0 0 8px;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 800;
         color: #222;
         line-height: 1.35;
       }
 
       .product-price {
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 700;
         color: #222;
         margin-bottom: 8px;
@@ -242,7 +248,7 @@
       .product-desc {
         margin: 0;
         color: #555;
-        font-size: 15px;
+        font-size: 14px;
         line-height: 1.5;
       }
 
@@ -375,6 +381,34 @@
       .modal-header h2 {
         margin: 0;
         font-size: 21px;
+      }
+
+      .modal-food-image {
+        width: 100%;
+        height: 260px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #fff;
+        margin-bottom: 16px;
+      }
+
+      .modal-food-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* 如果圖片不存在，就整塊隱藏 */
+      .modal-food-image.is-hidden {
+        display: none;
+      }
+
+      @media (max-width: 480px) {
+        .modal-food-image {
+          height: 240px;
+          border-radius: 16px;
+        }
       }
 
       .close-btn {
@@ -776,6 +810,60 @@
       .collapsible-notice.expanded .notice-full {
         display: block;
       }
+
+      .order-success-modal {
+        text-align: center;
+        padding-top: 28px;
+      }
+
+      .order-success-icon {
+        font-size: 46px;
+        margin-bottom: 10px;
+      }
+
+      .order-success-title {
+        margin: 0 0 16px;
+        font-size: 26px;
+        font-weight: 900;
+        color: #222;
+      }
+
+      .order-success-card {
+        background: #fff;
+        border: 1px solid #f0d6aa;
+        border-radius: 18px;
+        padding: 18px 14px;
+        margin: 16px 0;
+      }
+
+      .order-success-label {
+        font-size: 14px;
+        color: #777;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .order-success-no {
+        font-size: 28px;
+        font-weight: 900;
+        color: #d35400;
+        letter-spacing: 0.04em;
+      }
+
+      .order-success-text {
+        margin: 16px 0 8px;
+        color: #333;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.7;
+      }
+
+      .order-success-hint {
+        margin: 0 0 16px;
+        color: #888;
+        font-size: 14px;
+        line-height: 1.6;
+      }
     </style>
   </head>
 
@@ -861,9 +949,37 @@
       </div>
     </div>
 
+    <!-- 訂單完成 Modal -->
+    <div id="orderSuccessModalOverlay" class="modal-overlay">
+      <div class="modal order-success-modal">
+        <div class="order-success-icon">✅</div>
+
+        <h2 class="order-success-title">訂單已送出</h2>
+
+        <div class="order-success-card">
+          <div class="order-success-label">訂單編號</div>
+          <div class="order-success-no" id="successOrderNo">HS000000-000</div>
+        </div>
+
+        <p class="order-success-text">
+          請截圖此畫面，並上傳至 LINE 社群，<br />
+          方便小編確認訂單，也讓我們不會漏接唷！
+        </p>
+
+        <p class="order-success-hint">感謝支持早八滿堂漢神午餐外送 🍔🥤</p>
+
+        <button class="modal-action" onclick="closeOrderSuccessModal()">
+          我知道了
+        </button>
+      </div>
+    </div>
+
     <!-- 單點商品 Modal -->
     <div id="productModalOverlay" class="modal-overlay">
       <div class="modal">
+        <div class="modal-food-image" id="modalProductImageBox">
+          <img id="modalProductImage" src="" alt="" />
+        </div>
         <div class="modal-header">
           <h2 id="modalProductName"></h2>
           <button class="close-btn" onclick="closeProductModal()">×</button>
@@ -893,6 +1009,9 @@
     <!-- 套餐 Modal -->
     <div id="comboModalOverlay" class="modal-overlay">
       <div class="modal">
+        <div class="modal-food-image" id="modalComboImageBox">
+          <img id="modalComboImage" src="" alt="" />
+        </div>
         <div class="modal-header">
           <h2 id="modalComboName"></h2>
           <button class="close-btn" onclick="closeComboModal()">×</button>
@@ -966,8 +1085,11 @@
           <option value="現金付款">現金付款</option>
         </select>
 
-        <label>備註</label>
-        <textarea id="note" placeholder="例：靠近手扶梯旁、靠北側"></textarea>
+        <label>載具或其他備註</label>
+        <textarea
+          id="note"
+          placeholder="例：載具/ABC1234，或其他配送備註。"
+        ></textarea>
 
         <button id="submitBtn" class="modal-action" onclick="submitOrder()">
           送出訂單
@@ -977,10 +1099,10 @@
 
     <script>
       const GAS_URL =
-        "https://script.google.com/macros/s/AKfycbxo31KxAg40Jtf8HFEx4iCTbRJtILxC8ouyTx0PvktWuJkAtI9Wf6fCWOYYiKvKYAbV/exec";
+        "https://script.google.com/macros/s/AKfycbzvP64OylbddNouW4O59e-BOUExAJoJIIqws1UttQnaneWxQs8c6zWwBmgZY9ZAiTvH/exec";
       const SECRET_TOKEN = "zaoba_hanshin_2026";
       const IMAGE_BASE_PATH = "images/";
-      const ENABLE_LOADING = false; // 開發階段可先關閉；正式上線改成 true。
+      const ENABLE_LOADING = true; // 開發階段可先關閉；正式上線改成 true。
 
       let menuData = null;
       let cart = [];
@@ -1183,6 +1305,11 @@
           renderCategoryNav();
           renderProducts();
 
+          setTimeout(() => {
+            updateActiveCategoryOnScroll();
+            setupCategoryScrollSpy();
+          }, 100);
+
           if (ENABLE_LOADING) hideLoadingOverlayWithMinimumTime();
         };
 
@@ -1232,13 +1359,18 @@
         }
 
         nav.innerHTML = menuData.categories
-          .map(
-            (cat) => `
-              <button onclick="scrollToCategory('${escapeHtml(
-                cat.category
-              )}')">${escapeHtml(cat.category)}</button>
-            `
-          )
+          .map((cat) => {
+            const category = String(cat.category || "");
+            return `
+        <button
+          type="button"
+          data-category="${escapeHtml(category)}"
+          onclick="scrollToCategory('${escapeHtml(category)}')"
+        >
+          ${escapeHtml(category)}
+        </button>
+      `;
+          })
           .join("");
       }
 
@@ -1346,10 +1478,114 @@
         img.style.display = "none";
       }
 
+      function setModalFoodImage(imageBoxId, imageId, itemId, itemName) {
+        const imageBox = document.getElementById(imageBoxId);
+        const image = document.getElementById(imageId);
+
+        if (!imageBox || !image || !itemId) return;
+
+        imageBox.classList.remove("is-hidden");
+
+        image.src = `${IMAGE_BASE_PATH}${itemId}.jpg`;
+        image.alt = itemName || "";
+
+        image.onerror = function () {
+          imageBox.classList.add("is-hidden");
+          image.removeAttribute("src");
+        };
+      }
+
       function scrollToCategory(category) {
         const target = document.getElementById(`category-${safeId(category)}`);
         if (!target) return;
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        setActiveCategory(category);
+
+        const nav = document.getElementById("categoryNav");
+        const navHeight = nav ? nav.offsetHeight : 0;
+        const extraOffset = 8;
+
+        const targetTop =
+          target.getBoundingClientRect().top +
+          window.pageYOffset -
+          navHeight -
+          extraOffset;
+
+        window.scrollTo({
+          top: targetTop,
+          behavior: "smooth",
+        });
+      }
+
+      let scrollSpyTicking = false;
+
+      function updateActiveCategoryOnScroll() {
+        if (!menuData || !Array.isArray(menuData.categories)) return;
+
+        const nav = document.getElementById("categoryNav");
+        const navHeight = nav ? nav.offsetHeight : 0;
+
+        let currentCategory = "";
+
+        const checkLine = navHeight + 24;
+
+        for (const cat of menuData.categories) {
+          const category = String(cat.category || "");
+          const section = document.getElementById(
+            `category-${safeId(category)}`
+          );
+
+          if (!section) continue;
+
+          const rect = section.getBoundingClientRect();
+
+          if (rect.top <= checkLine) {
+            currentCategory = category;
+          }
+        }
+
+        if (currentCategory) {
+          setActiveCategory(currentCategory);
+        }
+      }
+
+      let categoryScrollSpyInitialized = false;
+
+      function setupCategoryScrollSpy() {
+        if (categoryScrollSpyInitialized) return;
+
+        categoryScrollSpyInitialized = true;
+
+        window.addEventListener("scroll", () => {
+          if (scrollSpyTicking) return;
+
+          scrollSpyTicking = true;
+
+          window.requestAnimationFrame(() => {
+            updateActiveCategoryOnScroll();
+            scrollSpyTicking = false;
+          });
+        });
+      }
+
+      function setActiveCategory(category) {
+        const nav = document.getElementById("categoryNav");
+        if (!nav || !category) return;
+
+        const buttons = nav.querySelectorAll("button");
+
+        buttons.forEach((button) => {
+          const isActive = button.dataset.category === category;
+          button.classList.toggle("active", isActive);
+
+          if (isActive) {
+            button.scrollIntoView({
+              behavior: "smooth",
+              inline: "center",
+              block: "nearest",
+            });
+          }
+        });
       }
 
       function openProductModal(productId) {
@@ -1362,6 +1598,13 @@
         }
 
         currentQty = 1;
+
+        setModalFoodImage(
+          "modalProductImageBox",
+          "modalProductImage",
+          currentProduct.id,
+          currentProduct.name
+        );
 
         document.getElementById("modalProductName").textContent =
           currentProduct.name;
@@ -1422,12 +1665,7 @@
         }</h4>
             ${group.options
               .map((option, index) => {
-                const shouldCheck =
-                  selectedIds.includes(option.optionId) ||
-                  (!selectedIds.length &&
-                    group.type === "single" &&
-                    group.required &&
-                    index === 0);
+                const shouldCheck = selectedIds.includes(option.optionId);
 
                 return `
                   <label class="option-row">
@@ -1565,6 +1803,14 @@
         }
 
         currentComboQty = 1;
+
+        setModalFoodImage(
+          "modalComboImageBox",
+          "modalComboImage",
+          currentCombo.comboId,
+          currentCombo.name
+        );
+
         initializeComboState();
 
         document.getElementById("modalComboName").textContent =
@@ -1589,28 +1835,10 @@
         currentComboState = {};
 
         (currentCombo.groups || []).forEach((group) => {
-          const min = Number(group.min || 0);
-          const max = Number(group.max || 1);
-          const defaultCount = min > 0 ? min : group.required ? 1 : 0;
-
           currentComboState[group.groupId] = {
             selectedProductIds: [],
             optionSelections: {},
           };
-
-          if (defaultCount > 0) {
-            group.options
-              .slice(0, max === 1 ? 1 : defaultCount)
-              .forEach((opt) => {
-                currentComboState[group.groupId].selectedProductIds.push(
-                  opt.product.id
-                );
-                ensureDefaultProductOptionSelections(
-                  group.groupId,
-                  opt.product.id
-                );
-              });
-          }
         });
       }
 
@@ -1628,16 +1856,6 @@
         (product.optionGroups || []).forEach((optionGroup) => {
           if (!groupState.optionSelections[productId][optionGroup.groupId]) {
             groupState.optionSelections[productId][optionGroup.groupId] = [];
-
-            if (
-              optionGroup.type === "single" &&
-              optionGroup.required &&
-              optionGroup.options.length > 0
-            ) {
-              groupState.optionSelections[productId][optionGroup.groupId] = [
-                optionGroup.options[0].optionId,
-              ];
-            }
           }
         });
       }
@@ -1767,13 +1985,7 @@
 
                 ${(group.options || [])
                   .map((option, index) => {
-                    const checked =
-                      selectedIds.includes(option.optionId) ||
-                      (!selectedIds.length &&
-                        group.type === "single" &&
-                        group.required &&
-                        index === 0);
-
+                    const checked = selectedIds.includes(option.optionId);
                     return `
                       <label class="option-row">
                         <input
@@ -2133,12 +2345,11 @@
         if (!item.options || !item.options.length) return "";
 
         return item.options
-          .map(
-            (opt) =>
-              `${opt.groupName}：${opt.optionName}${
-                opt.priceDelta > 0 ? `＋$${opt.priceDelta}` : ""
-              }`
-          )
+          .map((opt) => {
+            const priceText =
+              Number(opt.priceDelta || 0) > 0 ? `＋$${opt.priceDelta}` : "";
+            return `${opt.optionName}${priceText}`;
+          })
           .join("、");
       }
 
@@ -2147,29 +2358,32 @@
 
         return item.comboGroups
           .map((group) => {
-            const selectedText = (group.selectedProducts || [])
+            return (group.selectedProducts || [])
               .map((product) => {
-                const deltaText =
-                  product.priceDelta > 0 ? `＋$${product.priceDelta}` : "";
+                const productDeltaText =
+                  Number(product.priceDelta || 0) > 0
+                    ? `＋$${product.priceDelta}`
+                    : "";
+
                 const optionText =
                   product.options && product.options.length
                     ? `（${product.options
-                        .map(
-                          (opt) =>
-                            `${opt.groupName}：${opt.optionName}${
-                              opt.priceDelta > 0 ? `＋$${opt.priceDelta}` : ""
-                            }`
-                        )
+                        .map((opt) => {
+                          const optionPriceText =
+                            Number(opt.priceDelta || 0) > 0
+                              ? `＋$${opt.priceDelta}`
+                              : "";
+                          return `${opt.optionName}${optionPriceText}`;
+                        })
                         .join("、")}）`
                     : "";
 
-                return `${product.name}${deltaText}${optionText}`;
+                return `${product.name}${productDeltaText}${optionText}`;
               })
               .join("、");
-
-            return `${group.groupName}：${selectedText}`;
           })
-          .join("\n");
+          .filter(Boolean)
+          .join("、");
       }
 
       function renderCartModal() {
@@ -2319,9 +2533,12 @@
           0
         );
 
+        const orderNo = createFrontendOrderNo();
+
         const orderData = {
           source: "hanshin_order_page",
           token: SECRET_TOKEN,
+          orderNo: orderNo,
           deliveryDate: deliveryDate,
           deliveryTitle: selectedDelivery ? selectedDelivery.title : "",
           deliveryTime: selectedDelivery ? selectedDelivery.deliveryTime : "",
@@ -2347,8 +2564,6 @@
             body: JSON.stringify(orderData),
           });
 
-          showMessage("訂單已送出！請留意手機聯絡，謝謝。", "success");
-
           cart = [];
           updateCartBar();
           renderProducts();
@@ -2364,6 +2579,8 @@
           document.getElementById("counter").value = "";
           document.getElementById("payment").value = "現場付款";
           document.getElementById("note").value = "";
+
+          openOrderSuccessModal(orderNo);
         } catch (error) {
           console.error(error);
           showMessage("訂單送出失敗，請稍後再試或聯絡店家。", "error");
@@ -2417,6 +2634,15 @@
         const productOverlay = document.getElementById("productModalOverlay");
         const comboOverlay = document.getElementById("comboModalOverlay");
         const cartOverlay = document.getElementById("cartModalOverlay");
+        const orderSuccessOverlay = document.getElementById(
+          "orderSuccessModalOverlay"
+        );
+
+        if (orderSuccessOverlay) {
+          orderSuccessOverlay.addEventListener("click", function (event) {
+            if (event.target === orderSuccessOverlay) closeOrderSuccessModal();
+          });
+        }
 
         if (productOverlay) {
           productOverlay.addEventListener("click", function (event) {
@@ -2441,8 +2667,45 @@
             closeProductModal();
             closeComboModal();
             closeCartModal();
+            closeOrderSuccessModal();
           }
         });
+      }
+
+      function createFrontendOrderNo() {
+        const now = new Date();
+
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const dd = String(now.getDate()).padStart(2, "0");
+
+        const hh = String(now.getHours()).padStart(2, "0");
+        const mi = String(now.getMinutes()).padStart(2, "0");
+        const ss = String(now.getSeconds()).padStart(2, "0");
+
+        const random = Math.floor(Math.random() * 900 + 100);
+
+        return `HS${yyyy}${mm}${dd}-${hh}${mi}${ss}${random}`;
+      }
+
+      function openOrderSuccessModal(orderNo) {
+        const orderNoEl = document.getElementById("successOrderNo");
+        const overlay = document.getElementById("orderSuccessModalOverlay");
+
+        if (orderNoEl) {
+          orderNoEl.textContent = orderNo || "";
+        }
+
+        if (overlay) {
+          overlay.classList.add("show");
+        }
+      }
+
+      function closeOrderSuccessModal() {
+        const overlay = document.getElementById("orderSuccessModalOverlay");
+        if (overlay) {
+          overlay.classList.remove("show");
+        }
       }
 
       function toggleNotice() {
