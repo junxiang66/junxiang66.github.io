@@ -134,12 +134,11 @@
       }
 
       .order-id {
-        font-size: 18px;
-        font-weight: 800;
-        color: #222;
+        font-size: 13px;
+        font-weight: 600;
+        color: #999;
         word-break: break-all;
       }
-
       .status {
         display: inline-block;
         padding: 5px 12px;
@@ -387,9 +386,28 @@
         gap: 4px;
       }
 
+      .order-summary-main {
+        font-size: 20px;
+        font-weight: 800;
+        color: #222;
+        line-height: 1.4;
+        word-break: break-word;
+      }
+
       .order-summary-sub {
         font-size: 13px;
-        color: #888;
+        color: #999;
+        line-height: 1.4;
+      }
+
+      @media (max-width: 700px) {
+        .order-summary-main {
+          font-size: 17px;
+        }
+
+        .order-id {
+          font-size: 12px;
+        }
       }
 
       .expand-icon {
@@ -424,6 +442,101 @@
         color: #c62828;
         font-weight: 800;
       }
+
+      .status.printed {
+        background: #e8f7ee;
+        color: #168348;
+      }
+
+      .mark-printed-btn {
+        background: #168348;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .mark-printed-btn:hover {
+        background: #126b3b;
+      }
+
+      .mark-printed-btn:disabled {
+        background: #aaa;
+        cursor: not-allowed;
+      }
+
+      .mark-printed-btn.done {
+        background: #e8f7ee;
+        color: #168348;
+        cursor: default;
+      }
+
+      .status.printed {
+        background: #e8f7ee;
+        color: #168348;
+      }
+
+      .status.delivered {
+        background: #ffecec;
+        color: #c62828;
+      }
+
+      .printed-btn-wrap {
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid #eee;
+        text-align: right;
+      }
+
+      .mark-status-btn {
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .mark-status-btn.printed-action {
+        background: #168348;
+      }
+
+      .mark-status-btn.printed-action:hover {
+        background: #126b3b;
+      }
+
+      .mark-status-btn.delivered-action {
+        background: #ffecec;
+        color: #c62828;
+      }
+
+      .mark-status-btn.delivered-action:hover {
+        background: #ffdede;
+      }
+
+      .mark-status-btn:disabled {
+        background: #eee;
+        color: #999;
+        cursor: not-allowed;
+      }
+
+      .mark-status-btn.done {
+        background: #ffecec;
+        color: #c62828;
+        cursor: default;
+      }
+
+      .sort-btn {
+        background: #8a6d3b;
+      }
+
+      .sort-btn:hover {
+        background: #755c32;
+      }
     </style>
   </head>
 
@@ -441,6 +554,9 @@
         <input type="date" id="orderDate" />
         <button id="searchBtn" onclick="loadOrders()">查詢訂單</button>
         <button class="print-btn" onclick="window.print()">列印</button>
+        <button class="sort-btn" id="sortBtn" onclick="toggleSortOrder()">
+          排序調整：B1→6F
+        </button>
       </div>
 
       <div id="message"></div>
@@ -452,8 +568,10 @@
 
     <script>
       const GAS_URL =
-        "https://script.google.com/macros/s/AKfycbzUAlPT9gnDAV9tt7sltf6Qe9-1DCuM_ztlNVMOeoD1wltwsc8LW57_ZCIyZ8jBY_0m/exec";
+        "https://script.google.com/macros/s/AKfycbyMzynUJL6dIww2Wa-2xv7Y-bz0h4SXFLlKH6cTGvDOzHCaRKspYyqzyDbgYo6-zxpl/exec";
       let dynamicLabelNames = [];
+      let currentOrders = [];
+      let sortDirection = "asc";
 
       document.addEventListener("DOMContentLoaded", () => {
         setDefaultDateToday();
@@ -522,8 +640,10 @@
         const summaryEl = document.getElementById("summary");
         const ordersEl = document.getElementById("orders");
 
-        const orders = data.orders || [];
+        currentOrders = data.orders || [];
         dynamicLabelNames = data.labelNames || [];
+
+        const orders = sortOrdersByFloor(currentOrders);
         const totalAmount = orders.reduce(
           (sum, order) => sum + Number(order.totalAmount || 0),
           0
@@ -557,24 +677,33 @@
               order.paymentStatus
             );
             const deliveryStatusText = order.deliveryStatus || "未處理";
+            const deliveryStatusClass =
+              getDeliveryStatusClass(deliveryStatusText);
             const cardId = `order-card-${index}`;
 
             return `
     <div class="order-card collapsed" id="${cardId}" onclick="toggleOrderCard('${cardId}')">
       <div class="order-summary-row">
         <div class="order-summary-left">
-          <div class="order-id">訂單編號：${escapeHtml(order.orderId)}</div>
-          <div class="order-summary-sub">
+          <div class="order-summary-main">
             ${escapeHtml(order.customerName)}｜${escapeHtml(
               order.floor
             )}｜${escapeHtml(order.counter)}｜共 ${escapeHtml(
               order.totalQty
             )} 份｜$${formatMoney(order.totalAmount)}
           </div>
+
+          <div class="order-id">
+            訂單編號：${escapeHtml(order.orderId)}
+          </div>
         </div>
 
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div class="status">${escapeHtml(deliveryStatusText)}</div>
+          <div class="status ${deliveryStatusClass}" id="status-${escapeHtml(
+              order.orderId
+            )}">
+            ${escapeHtml(deliveryStatusText)}
+          </div>
           <div class="expand-icon">⌄</div>
         </div>
       </div>
@@ -660,11 +789,81 @@
             )}
           </div>
         </div>
+        <div class="printed-btn-wrap">
+          ${renderStatusButton(order)}
+        </div>
       </div>
     </div>
   `;
           })
           .join("");
+      }
+
+      function getFloorRank(floorText) {
+        const text = String(floorText || "")
+          .trim()
+          .toUpperCase();
+
+        // B1、B2、B3
+        const basementMatch = text.match(/^B(\d+)/);
+        if (basementMatch) {
+          return -Number(basementMatch[1]);
+        }
+
+        // 1F、2F、3F、6F
+        const floorMatch = text.match(/^(\d+)F/);
+        if (floorMatch) {
+          return Number(floorMatch[1]);
+        }
+
+        // 如果格式不明，排最後
+        return 999;
+      }
+
+      function sortOrdersByFloor(orders) {
+        const sorted = [...orders];
+
+        sorted.sort((a, b) => {
+          const rankA = getFloorRank(a.floor);
+          const rankB = getFloorRank(b.floor);
+
+          if (sortDirection === "asc") {
+            return (
+              rankA - rankB ||
+              String(a.counter).localeCompare(String(b.counter), "zh-Hant") ||
+              String(a.orderTime).localeCompare(String(b.orderTime))
+            );
+          }
+
+          return (
+            rankB - rankA ||
+            String(a.counter).localeCompare(String(b.counter), "zh-Hant") ||
+            String(a.orderTime).localeCompare(String(b.orderTime))
+          );
+        });
+
+        return sorted;
+      }
+
+      function toggleSortOrder() {
+        if (!currentOrders || currentOrders.length === 0) {
+          alert("目前沒有訂單可以排序");
+          return;
+        }
+
+        sortDirection = sortDirection === "asc" ? "desc" : "asc";
+
+        const sortBtn = document.getElementById("sortBtn");
+        if (sortBtn) {
+          sortBtn.textContent =
+            sortDirection === "asc" ? "排序調整：B1→6F" : "排序調整：6F→B1";
+        }
+
+        renderOrders({
+          orderDate: document.getElementById("orderDate").value,
+          orders: currentOrders,
+          labelNames: dynamicLabelNames,
+        });
       }
 
       function formatMealContent(order) {
@@ -764,6 +963,138 @@
         }
 
         return text;
+      }
+
+      function getDeliveryStatusClass(status) {
+        const text = String(status || "");
+
+        if (text.includes("已配送")) {
+          return "delivered";
+        }
+
+        if (text.includes("已打單")) {
+          return "printed";
+        }
+
+        return "";
+      }
+
+      async function updateOrderStatus(event, orderId, nextStatus) {
+        event.stopPropagation();
+
+        if (!orderId) {
+          alert("找不到訂單編號，無法更新狀態");
+          return;
+        }
+
+        const confirmText =
+          nextStatus === "已打單"
+            ? `確認訂單 ${orderId} 已經打單了嗎？`
+            : `確認訂單 ${orderId} 已經配送完成了嗎？`;
+
+        const confirmed = confirm(confirmText);
+
+        if (!confirmed) return;
+
+        const btn = document.getElementById(`status-btn-${orderId}`);
+        const statusEl = document.getElementById(`status-${orderId}`);
+
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = "更新中...";
+        }
+
+        try {
+          const url = `${GAS_URL}?action=updateDeliveryStatus&orderId=${encodeURIComponent(
+            orderId
+          )}&status=${encodeURIComponent(nextStatus)}`;
+
+          const res = await fetch(url);
+          const data = await res.json();
+
+          if (!data.success) {
+            throw new Error(data.message || "更新失敗");
+          }
+
+          if (statusEl) {
+            statusEl.textContent = nextStatus;
+            statusEl.classList.remove("printed", "delivered");
+            statusEl.classList.add(getDeliveryStatusClass(nextStatus));
+          }
+
+          if (btn) {
+            if (nextStatus === "已打單") {
+              btn.disabled = false;
+              btn.textContent = "確認已配送";
+              btn.classList.remove("printed-action");
+              btn.classList.add("delivered-action");
+              btn.setAttribute(
+                "onclick",
+                `updateOrderStatus(event, '${orderId}', '已配送')`
+              );
+            } else if (nextStatus === "已配送") {
+              btn.disabled = true;
+              btn.textContent = "已配送";
+              btn.classList.remove("delivered-action");
+              btn.classList.add("done");
+            }
+          }
+
+          alert(`已更新為：${nextStatus}`);
+        } catch (err) {
+          if (btn) {
+            btn.disabled = false;
+
+            if (nextStatus === "已打單") {
+              btn.textContent = "確認已打單";
+              btn.classList.add("printed-action");
+            } else {
+              btn.textContent = "確認已配送";
+              btn.classList.add("delivered-action");
+            }
+          }
+
+          alert(err.message || "更新配送狀態失敗，請稍後再試");
+        }
+      }
+
+      function renderStatusButton(order) {
+        const orderId = escapeHtml(order.orderId);
+        const status = String(order.deliveryStatus || "未配送");
+
+        if (status === "已配送") {
+          return `
+            <button
+              class="mark-status-btn done"
+              id="status-btn-${orderId}"
+              disabled
+            >
+              已配送
+            </button>
+          `;
+        }
+
+        if (status === "已打單") {
+          return `
+            <button
+              class="mark-status-btn delivered-action"
+              id="status-btn-${orderId}"
+              onclick="updateOrderStatus(event, '${orderId}', '已配送')"
+            >
+              確認已配送
+            </button>
+          `;
+        }
+
+        return `
+          <button
+            class="mark-status-btn printed-action"
+            id="status-btn-${orderId}"
+            onclick="updateOrderStatus(event, '${orderId}', '已打單')"
+          >
+            確認已打單
+          </button>
+        `;
       }
 
       function formatMealContentFallback(text) {
