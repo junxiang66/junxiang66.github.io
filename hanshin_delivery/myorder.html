@@ -537,6 +537,40 @@
       .sort-btn:hover {
         background: #755c32;
       }
+
+      @media (max-width: 700px) {
+        .toolbar {
+          position: static;
+          top: auto;
+          z-index: auto;
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        input[type="date"],
+        button {
+          width: 100%;
+        }
+      }
+
+      .compact-info {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        padding: 6px 0 4px;
+        font-size: 14px;
+      }
+
+      .compact-info .info-item {
+        word-break: break-word;
+      }
+
+      @media (max-width: 700px) {
+        .compact-info {
+          flex-direction: column;
+          gap: 6px;
+        }
+      }
     </style>
   </head>
 
@@ -709,54 +743,15 @@
       </div>
 
       <div class="order-detail" onclick="event.stopPropagation()">
-        <div class="customer-info">
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">姓名：</span>
-              <span class="value">${escapeHtml(order.customerName)}</span>
-            </div>
+        <div class="customer-info compact-info">
+          <div class="info-item">
+            <span class="label">手機：</span>
+            <span class="value">${escapeHtml(order.phone)}</span>
+          </div>
 
-            <div class="info-item">
-              <span class="label">手機：</span>
-              <span class="value">${escapeHtml(order.phone)}</span>
-            </div>
-
-            <div class="info-item">
-              <span class="label">樓層：</span>
-              <span class="value">${escapeHtml(order.floor)}</span>
-            </div>
-
-            <div class="info-item">
-              <span class="label">櫃位：</span>
-              <span class="value">${escapeHtml(order.counter)}</span>
-            </div>
-
-            <div class="info-item">
-              <span class="label">訂餐場次：</span>
-              <span class="value">${escapeHtml(order.session)}</span>
-            </div>
-
-            <div class="info-item">
-              <span class="label">配送時段：</span>
-              <span class="value">${escapeHtml(order.deliveryTime)}</span>
-            </div>
-
-            <div class="info-item">
-              <span class="label">付款方式：</span>
-              <span class="value">${escapeHtml(order.paymentMethod)}</span>
-            </div>
-
-            <div class="info-item">
-              <span class="label">付款狀態：</span>
-              <span class="value ${paymentStatusClass}">${escapeHtml(
-              order.paymentStatus
-            )}</span>
-            </div>
-
-            <div class="info-item">
-              <span class="label">訂單時間：</span>
-              <span class="value">${escapeHtml(order.orderTime)}</span>
-            </div>
+          <div class="info-item">
+            <span class="label">訂單時間：</span>
+            <span class="value">${escapeHtml(order.orderTime)}</span>
           </div>
         </div>
 
@@ -771,24 +766,6 @@
             ? `<div class="note">備註：${escapeHtml(order.note)}</div>`
             : ""
         }
-
-        <div class="order-footer">
-          <div>
-            <span class="label">總數量：</span>
-            <span class="value">${escapeHtml(order.totalQty)}</span>
-          </div>
-
-          <div>
-            <span class="label">總金額：</span>
-            <span class="value">$${formatMoney(order.totalAmount)}</span>
-          </div>
-
-          <div class="total">
-            共 ${escapeHtml(order.totalQty)} 份｜$${formatMoney(
-              order.totalAmount
-            )}
-          </div>
-        </div>
         <div class="printed-btn-wrap">
           ${renderStatusButton(order)}
         </div>
